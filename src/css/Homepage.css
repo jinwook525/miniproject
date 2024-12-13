@@ -1,0 +1,97 @@
+.wireframe {
+  background-color: rgba(255, 255, 255, 1.0);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.wireframe .div {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.04) 0%,
+    rgba(102, 102, 102, 0.2) 63%
+  );
+  background-color: var(--system-colors-overlays-default);
+  height: 1024px;
+  position: relative;
+  width: 1440px;
+}
+
+.wireframe .overlap-group {
+  background-image: url(../img/insect3.jpg);
+  background-position: 50% 50%;
+  background-size: cover;
+  height: 430px;
+  left: 242px;
+  position: absolute;
+  top: 375px;
+  width: 430px;
+  opacity: 0.5;
+}
+
+.wireframe .text-wrapper {
+  color: #000000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 50px;
+  font-weight: 700;
+  left: 116px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 174px;
+  white-space: nowrap;
+  width: 224px;
+}
+
+.wireframe .welcome {
+  color: transparent;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 100px;
+  font-weight: 400;
+  left: 488px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 216px;
+  white-space: nowrap;
+  width: 488px;
+}
+
+.wireframe .span {
+  color: #000000;
+}
+
+.wireframe .text-wrapper-2 {
+  color: transparent;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 100px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.wireframe .overlap {
+  background-image: url(../img/insect1.jpg);
+  background-position: 50% 50%;
+  background-size: cover;
+  height: 430px;
+  left: 774px;
+  position: absolute;
+  top: 375px;
+  width: 430px;
+  opacity: 0.5;
+}
+
+.wireframe .text-wrapper-3 {
+  color: #000000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 50px;
+  font-weight: 700;
+  left: 134px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 165px;
+  white-space: nowrap;
+  width: 278px;
+}
