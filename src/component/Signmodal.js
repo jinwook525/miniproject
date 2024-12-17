@@ -19,7 +19,7 @@ const SignModal = ({ isOpen, onClose }) => {
 
   //       console.log("logindata : ", data1);
   //       try{
-  //       const response = await axios.post('http://10.125.121.183:8080/signup', data1);
+  //       const response = await axios.post('http://10.125.121.217:8080/signup', data1);
 
 	// 	alert("회원가입 완료");
         

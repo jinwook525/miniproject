@@ -4,6 +4,8 @@ import Homepage from './component/Homepage';
 import Header from './component/Header';
 import LoginModal from './component/Loginmodal';
 import SignModal from './component/Signmodal';
+import BoardModal from './component/BoardModal';
+import SearchMain from './component/SearchMain';
 
 function App() {
   return (
@@ -11,9 +13,10 @@ function App() {
       <>
         <Header />
         <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/login" element={<LoginModal />} />
+          <Route path="/" element={<SearchMain />} />
+          {/* <Route path="/login" element={<LoginModal />} />
           <Route path="/signup" element={<SignModal />} />
+          <Route path='/board' element={<BoardModal />} /> */}
         </Routes>
       </>
     </BrowserRouter>

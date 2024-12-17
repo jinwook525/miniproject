@@ -35,8 +35,8 @@ export default function Header() {
 				<button className="cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-xl">
 					곤충검색
 				</button>
-				<button className="cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-xl">
-					커뮤니티
+				<button onClick={() => navigate('/board')}className="cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-xl">
+					게시판
 				</button>
 			</div>
 		</div>
