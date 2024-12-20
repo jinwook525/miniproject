@@ -1,16 +1,22 @@
 import axios from 'axios';
 import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useDispatch } from 'react-redux'; // useDispatch 추가
 import { loginSuccess } from './LoginSlice';
 
 const LoginModal = ({ isOpen, onClose }) => {
-  const navigate = useNavigate();
+  console.log('LoginModal 호출됨');
   const refId = useRef(null);
   const refPass = useRef(null);
   const dispatch = useDispatch();
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log('LoginModal 렌더링되지 않음: isOpen이 false');
+    return null;
+  } else {
+    console.log('LoginModal 렌더링됨: isOpen이 true');
+  }
+  
 
   const handleLoginClick = async () => {
     const data1 = {
@@ -25,12 +31,12 @@ const LoginModal = ({ isOpen, onClose }) => {
 
       const token = resp.data.token;
       const user = resp.data.username;
-      const role = resp.data.role;
+      const nick = resp.data.nickname;
 
-      dispatch(loginSuccess({ user, role, token }));
+      dispatch(loginSuccess({ user, nick, token }));
       localStorage.setItem("accessToken", token);
       localStorage.setItem("userId", user);
-      localStorage.setItem("role", role);
+      localStorage.setItem("nick", nick);
 
       console.log("Token : ", localStorage.getItem("accessToken"));
       console.log("res : ", resp);
@@ -42,7 +48,7 @@ const LoginModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className='fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50'>
+    <div id="login-modal" className='fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50'>
       <div className='bg-white p-5 rounded shadow-lg w-96 relative bg-gradient-to-t from-white to-blue-50'>
         <img
           src='./img/Exit.png'
