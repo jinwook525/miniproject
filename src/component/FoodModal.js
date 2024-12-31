@@ -9,7 +9,7 @@ const Modal = ({ isOpen, onClose, children }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg p-6 max-w-4xl w-11/12 shadow-lg relative"
+        className="bg-white rounded-lg p-6 max-w-6xl w-11/12 shadow-lg relative space-y-4"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
       >
         <button
@@ -18,7 +18,7 @@ const Modal = ({ isOpen, onClose, children }) => {
         >
           ×
         </button>
-        <div className="leading-tight">{children}</div> {/* 줄 간격 조정 */}
+        <div className="leading-tight">{children}</div> {/* Content container */}
       </div>
     </div>
   );

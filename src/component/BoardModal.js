@@ -28,11 +28,16 @@ const BoardModal = ({ isOpen, onClose }) => {
     const loadBoardData = async () => {
         try {
             const response = await axios.get('http://10.125.121.118:8080/board/getBoardList');
-            console.log('Response Data:', response.data); // 서버 응답 데이터 확인
+            console.log('Response Data:', response.data);
     
-            // 게시글 데이터 추출
-            const boardList = response.data.content || []; // content 배열 사용
-            setBoardData(boardList.slice().reverse()); // 역순으로 정렬하여 저장
+            const defaultDate = new Date().toISOString(); // 기본값 설정
+            const boardList = response.data.content || [];
+            const updatedBoardList = boardList.map((item) => ({
+                ...item,
+                createDate: item.createDate || defaultDate, // 기본값 추가
+            }));
+    
+            setBoardData(updatedBoardList.slice().reverse()); // 역순 정렬
         } catch (error) {
             console.error('게시글 불러오기 실패:', error);
         }
@@ -50,21 +55,22 @@ const BoardModal = ({ isOpen, onClose }) => {
     
     //게시글 생성 요청
     const boardWrite = async (newPost) => {
-        const token = localStorage.getItem('authToken'); // 로컬 스토리지에서 토큰 가져오기
+        const token = localStorage.getItem('authToken');
         if (!token) {
             alert("로그인이 필요합니다.");
             return;
         }
     
+        const defaultDate = new Date().toISOString();
         const postData = {
             ...newPost,
+            createDate: newPost.createDate || defaultDate, // 기본값 추가
             member: {
-                memberId: loginUser, // Redux에서 가져온 userId
+                memberId: loginUser,
             },
         };
     
         console.log("보드 생성 요청 데이터:", postData);
-        console.log("사용 중인 토큰:", token); // 추가 디버깅 로그
     
         try {
             const resp = await axios.post(
@@ -72,7 +78,7 @@ const BoardModal = ({ isOpen, onClose }) => {
                 postData,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`, // Bearer 형식으로 추가
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
@@ -118,13 +124,13 @@ const boardDel = async () => {
 
     //게시글 클릭시 실행
     const handleItemClick = (item) => {
-        setSelectedItem(item);
-
-        setDetailOpen(true);
+        console.log("선택된 게시글 데이터:", item); // 디버깅용 로그 추가
+        setSelectedItem(item); // 선택된 게시글 설정
+        setDetailOpen(true); // 상세 보기 창 열기
         setWriteOpen(false); 
         setEditOpen(false);
     };
-
+    
     //상세페이지 닫음 실행
     const handleDetailClose = () => {
         setDetailOpen(false);
@@ -192,6 +198,8 @@ const boardDel = async () => {
         };
         
     };
+    const defaultDate = new Date().toISOString(); // 기본 현재 날짜
+
     return (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex flex-col items-center justify-center z-30">
             <div className="bg-white p-5 rounded-md shadow-lg w-3/4 relative bg-gradient-to-t from-white to-blue-50">
@@ -286,36 +294,32 @@ const boardDel = async () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentItems.length > 0 ? (
-                                    currentItems.map((item) => (
-                                        <tr
-                                            key={item.idx}
-                                            className="hover:bg-blue-50 transition-all cursor-pointer"
-                                            onClick={() => setSelectedItem(item)}
-                                        >
-                                           
-                                            <td className="p-3 text-gray-700">{item.title}</td>
-                                            <td className="p-3 text-center text-gray-700">{item.content}</td>
-                                            <td className="p-3 text-right text-gray-700">
-                                            {format(
-    selectedItem && selectedItem.regidate_date
-        ? parseISO(selectedItem.regidate_date)
-        : new Date(),
-    "yyyy-MM-dd HH:mm:ss"
-)}
+    {currentItems.length > 0 ? (
+        currentItems.map((item) => (
+            <tr
+                key={item.seq}
+                className="hover:bg-blue-50 transition-all cursor-pointer"
+                onClick={() => handleItemClick(item)}
+            >
+                <td className="p-3 text-left text-gray-700">{item.title}</td>
+                <td className="p-3 text-center text-gray-700">{item.content}</td>
+                <td className="p-3 text-right text-gray-700">
+                    {item.createDate
+                        ? format(parseISO(item.createDate), "yyyy-MM-dd HH:mm:ss")
+                        : "날짜 없음"}
+                </td>
+            </tr>
+        ))
+    ) : (
+        <tr>
+            <td colSpan="5" className="text-center text-gray-700 py-6">
+                데이터가 없습니다.
+            </td>
+        </tr>
+    )}
+</tbody>
 
-                                            </td>
-                                           
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5" className="text-center text-gray-700 py-6">
-                                            데이터가 없습니다.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
+
                         </table>
                         <div className="flex justify-center mt-4">
                             <button

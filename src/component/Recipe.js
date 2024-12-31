@@ -165,23 +165,24 @@ export default function Recipe() {
 
       {/* 모달 */}
       <Modal isOpen={!!selectedFood} onClose={() => setSelectedFood(null)}>
-        {selectedFood && (
-          <div>
-            <h1 className="text-xl font-bold mb-4">{selectedFood.foodName}</h1>
-            <img
-              src={selectedFood.imageUrl}
-              alt={selectedFood.foodName}
-              className="max-w-xs rounded-md mb-4"
-            />
-            <p className="text-sm mb-4">
-              <strong>요약:</strong> {removeHtmlTags(selectedFood.summary)}
-            </p>
-            <p className="text-sm leading-tight">
-              <strong>레시피:</strong> {removeHtmlTags(selectedFood.recipe)}
-            </p>
-          </div>
-        )}
-      </Modal>
+  {selectedFood && (
+    <div>
+      <h1 className="text-xl font-bold mb-4">{selectedFood.foodName}</h1>
+      <img
+        src={selectedFood.imageUrl}
+        alt={selectedFood.foodName}
+        className="w-40 h-auto mx-auto rounded-md mb-4" // 이미지 크기 조정
+      />
+      <p className="text-sm mb-4">
+        <strong>요약:</strong> {removeHtmlTags(selectedFood.summary)}
+      </p>
+      <p className="text-sm leading-tight">
+        <strong>레시피:</strong> {removeHtmlTags(selectedFood.recipe)}
+      </p>
+    </div>
+  )}
+</Modal>
+
     </div>
   );
 }
