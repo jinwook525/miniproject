@@ -38,8 +38,14 @@ export default function Header({ onLoginClick, onSignUpClick, onBoardClick }) {
 			{/* 메뉴 */}
 			<div className="flex justify-center space-x-10 py-8">
 				<button onClick={() => navigate('/')}className="cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-xl">
-					곤충검색
+					레시피
 				</button>
+        <button onClick={() => navigate('/favorites')}className="cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-xl">
+          즐겨찾기
+        </button>
+        <button onClick={() => navigate('/buy')}className="cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-xl">
+          구매
+        </button>
 				<button  onClick={() => {
           console.log('게시판 버튼 클릭');
           navigate('/board'); // 경로 이동

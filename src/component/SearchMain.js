@@ -66,7 +66,7 @@ export default function SearchMain() {
       <div key={`${selC1}-${selC2}-${idx}`} className="flex justify-center items-center mt-2">
         {infoKey.map((k, subIdx) => (
           <div key={`${k}-${subIdx}`} className="w-full flex justify-between border-b">
-            <div className="w-full p-2 bg-black text-white text-center text-sm font-bold">
+            <div className="w-full p-2 text-center text-sm font-bold">
               {k}
             </div>
             <div className="w-full p-2 text-center font-bold">

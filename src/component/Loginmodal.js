@@ -20,27 +20,33 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   const handleLoginClick = async () => {
     const data1 = {
-      username: refId.current.value,
+      userid: refId.current.value,
       password: refPass.current.value,
     };
 
     console.log("logindata : ", data1);
 
     try {
-      const resp = await axios.post('http://10.125.121.217:8080/login', data1);
-
-      const token = resp.data.token;
-      const user = resp.data.username;
-      const nick = resp.data.nickname;
-
-      dispatch(loginSuccess({ user, nick, token }));
-      localStorage.setItem("accessToken", token);
-      localStorage.setItem("userId", user);
-      localStorage.setItem("nick", nick);
-
-      console.log("Token : ", localStorage.getItem("accessToken"));
-      console.log("res : ", resp);
-      onClose();
+      const resp = await axios.post('http://10.125.121.118:8080/login', data1);
+      const token = resp.data.token; // 토큰 선언
+      if (token) {
+          dispatch(loginSuccess({ user: data1.userid, token })); // Redux 업데이트
+          localStorage.setItem("accessToken", token); // 토큰 저장
+          localStorage.setItem("userId", data1.userid); // 사용자 ID 저장
+      }
+      
+      const user = resp.data.userid; // 응답에서 사용자 ID 추출
+      const nick = resp.data.nickname; // 응답에서 닉네임 추출
+      
+      dispatch(loginSuccess({ user, nick, token })); // Redux 업데이트
+      localStorage.setItem("accessToken", token); // 토큰 다시 저장 (중복 제거 가능)
+      localStorage.setItem("userId", user); // 사용자 ID 저장
+      localStorage.setItem("nick", nick); // 닉네임 저장
+      
+      console.log("Token : ", localStorage.getItem("accessToken")); // 저장된 토큰 확인
+      console.log("res : ", resp); // 응답 전체 출력
+      onClose(); // 모달 닫기
+      
     } catch (error) {
       console.error("로그인 실패 : ", error);
       alert("로그인 실패");

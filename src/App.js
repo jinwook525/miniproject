@@ -6,7 +6,9 @@ import LoginModal from './component/Loginmodal';
 import SignModal from './component/Signmodal';
 import BoardModal from './component/BoardModal';
 import SearchMain from './component/SearchMain';
-
+import Recipe from './component/Recipe';
+import Buy from './component/Buy';
+import Favorites from './component/Favorites';
 function App() {
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
   const [isSignModalOpen, setSignModalOpen] = useState(false);
@@ -29,7 +31,7 @@ function App() {
         }}
       />
       <Routes>
-        <Route path="/" element={<SearchMain />} />
+        <Route path="/" element={<Recipe />} />
         <Route
           path="/signup"
           element={
@@ -39,6 +41,9 @@ function App() {
             />
           }
         />
+        <Route path="/buy"  element={<Buy />} />
+
+        
         <Route
           path="/board"
           element={
@@ -48,8 +53,15 @@ function App() {
             />
           }
         />
+      <Route
+          path="/favorites"
+          element={
+            <Favorites
+            />
+          }
+        />
       </Routes>
-
+      
       {/* LoginModal은 조건부 렌더링 */}
       {isLoginModalOpen && (
         <LoginModal

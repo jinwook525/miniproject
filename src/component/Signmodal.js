@@ -22,17 +22,17 @@ const SignModal = ({ isOpen, onClose }) => {
     };
 
     console.log('logindata : ', data1);
-    try {
-      const response = await axios.post('http://10.125.121.217:8080/members/join', data1);
+      try {
+        const response = await axios.post('http://10.125.121.118:8080/members/join', data1);
+        alert('회원가입 완료');
+        // 회원가입 후 로그인 화면으로 이동
+        navigate('/login');
+      } catch (error) {
+        console.error('회원가입 실패 : ', error);
+        alert('회원가입 실패');
+      }
 
-      alert('회원가입 완료');
-      onClose();
-    } catch (error) {
-      console.error('회원가입 실패 : ', error);
-      alert('회원가입 실패');
-    }
-  };
-
+    };
   return (
     <div className='fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50'>
       <div className='bg-white p-5 rounded shadow-lg w-96 relative'>
