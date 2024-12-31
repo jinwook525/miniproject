@@ -50,16 +50,46 @@ const BoardModal = ({ isOpen, onClose }) => {
     
     //게시글 생성 요청
     const boardWrite = async (newPost) => {
+        const token = localStorage.getItem('authToken'); // 로컬 스토리지에서 토큰 가져오기
+        if (!token) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+    
+        const postData = {
+            ...newPost,
+            member: {
+                memberId: loginUser, // Redux에서 가져온 userId
+            },
+        };
+    
+        console.log("보드 생성 요청 데이터:", postData);
+        console.log("사용 중인 토큰:", token); // 추가 디버깅 로그
+    
         try {
-        console.log(newPost);
-        const resp = await axios.post(`http://10.125.121.118:8080/board/insertBoard`, newPost);
-        setSelectedItem(null);
-        loadBoardData();
-        console.log("Board write: ", resp.data);
-    } catch (error) {
-        console.error("보드데이터 글쓰기 실패", error);
-    }
-};
+            const resp = await axios.post(
+                `http://10.125.121.118:8080/board/insertBoard`,
+                postData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Bearer 형식으로 추가
+                    },
+                }
+            );
+            setSelectedItem(null);
+            loadBoardData();
+            console.log("Board write 성공: ", resp.data);
+        } catch (error) {
+            console.error("보드데이터 글쓰기 실패", error);
+            if (error.response) {
+                console.error("서버 응답 데이터:", error.response.data);
+            }
+        }
+    };
+    
+    
+    
+    
 
 //게시글 수정 요청
 const boardEdit = async (newPost) => {
@@ -185,10 +215,7 @@ const boardDel = async () => {
                         <h2 className="text-2xl font-bold text-blue-700 mb-4">
                             {selectedItem.title}
                         </h2>
-                        <div className="flex justify-between mb-4">
-                            <p className="text-sm text-gray-500">글번호: {selectedItem.idx}</p>
-                            <p className="text-sm text-gray-500">조회수: {selectedItem.visit_count}</p>
-                        </div>
+                       
                         <p className="text-md text-gray-700 mb-6">
                             <strong>작성자:</strong> {selectedItem.userid}
                         </p>
@@ -251,11 +278,11 @@ const boardDel = async () => {
                         <table className="table-auto w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
                             <thead className="bg-gray-300">
                                 <tr>
-                                    <th className="p-3 text-left text-gray-700">글번호</th>
+                                   
                                     <th className="p-3 text-left text-gray-700">제목</th>
-                                    <th className="p-3 text-left text-gray-700">작성자</th>
-                                    <th className="p-3 text-left text-gray-700">게시일</th>
-                                    <th className="p-3 text-left text-gray-700">조회수</th>
+                                    <th className="p-3 text-center text-gray-700">내용</th>
+                                    <th className="p-3 text-right text-gray-700">작성시간</th>
+                                 
                                 </tr>
                             </thead>
                             <tbody>
@@ -266,13 +293,19 @@ const boardDel = async () => {
                                             className="hover:bg-blue-50 transition-all cursor-pointer"
                                             onClick={() => setSelectedItem(item)}
                                         >
-                                            <td className="p-3 text-gray-700">{item.idx}</td>
+                                           
                                             <td className="p-3 text-gray-700">{item.title}</td>
-                                            <td className="p-3 text-gray-700">{item.nickname}</td>
-                                            <td className="p-3 text-gray-700">
-                                                {format(parseISO(item.regidate_date), "yyyy-MM-dd")}
+                                            <td className="p-3 text-center text-gray-700">{item.content}</td>
+                                            <td className="p-3 text-right text-gray-700">
+                                            {format(
+    selectedItem && selectedItem.regidate_date
+        ? parseISO(selectedItem.regidate_date)
+        : new Date(),
+    "yyyy-MM-dd HH:mm:ss"
+)}
+
                                             </td>
-                                            <td className="p-3 text-gray-700">{item.visit_count}</td>
+                                           
                                         </tr>
                                     ))
                                 ) : (

@@ -7,14 +7,17 @@ const BoardWrite = ({ onSubmit, onClose, initialData, user }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const newPost = {
-            ...initialData,
-            idx: initialData.idx || '',
-            title: title,
-            username: user || '',
-            content: content,
-            regidate_date: initialData.regidate_date || new Date().toISOString(),
-            visit_count: initialData.visit_count || 0,
+            seq: initialData.seq || '', // 게시글 ID (기본값은 빈 값)
+            title: title, // 제목
+            content: content, // 내용
+            createDate: initialData.createDate || new Date().toISOString(), // 생성 날짜
+            cnt: initialData.cnt || 0, // 조회수 (초기값 0)
+            member: {
+                memberId: user || '', // 작성자 ID
+            },
         };
+        
+        
         onSubmit(newPost);  // 부모 컴포넌트로 새 글 데이터 전달
     };
 
