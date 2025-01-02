@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import BoardWrite from './BoardWrite';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { format, parseISO } from 'date-fns';
+import {  isValid,format, parseISO } from 'date-fns';
+
+
 
 const BoardModal = ({ isOpen, onClose }) => {
     const [boardData, setBoardData] = useState([]);
@@ -12,7 +14,7 @@ const BoardModal = ({ isOpen, onClose }) => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchKey, setSearchKey] = useState('');
-
+    
     const itemLen = 10;
     const totalPages = Math.ceil(boardData.length / itemLen);
     const lastPage = currentPage * itemLen;
@@ -28,20 +30,24 @@ const BoardModal = ({ isOpen, onClose }) => {
     const loadBoardData = async () => {
         try {
             const response = await axios.get('http://10.125.121.118:8080/board/getBoardList');
-            console.log('Response Data:', response.data);
+            console.log('API 응답 데이터:', response.data);
     
-            const defaultDate = new Date().toISOString(); // 기본값 설정
+            const defaultDate = new Date().toISOString(); // 기본 현재 날짜
             const boardList = response.data.content || [];
             const updatedBoardList = boardList.map((item) => ({
                 ...item,
-                createDate: item.createDate || defaultDate, // 기본값 추가
+                createDate: item.createDate && isValid(parseISO(item.createDate))
+                    ? item.createDate
+                    : defaultDate, // 유효하지 않은 경우 기본값 사용
             }));
     
+            console.log('업데이트된 게시글 목록:', updatedBoardList);
             setBoardData(updatedBoardList.slice().reverse()); // 역순 정렬
         } catch (error) {
             console.error('게시글 불러오기 실패:', error);
         }
     };
+    
     
     
 
@@ -84,6 +90,7 @@ const BoardModal = ({ isOpen, onClose }) => {
             );
             setSelectedItem(null);
             loadBoardData();
+            alert("글쓰기 성공");
             console.log("Board write 성공: ", resp.data);
         } catch (error) {
             console.error("보드데이터 글쓰기 실패", error);
@@ -92,35 +99,76 @@ const BoardModal = ({ isOpen, onClose }) => {
             }
         }
     };
-    
-    
-    
+   
     
 
 //게시글 수정 요청
 const boardEdit = async (newPost) => {
+    const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
+    if (!token) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
     try {
-        console.log(newPost);
-        const resp = await axios.put(`http://10.125.121.183:8080/board/updateBoard`, newPost);
+        console.log("수정 요청 데이터:", newPost);
+        const resp = await axios.post(
+            `http://10.125.121.118:8080/board/updateBoard`,
+            newPost,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // 인증 헤더 추가
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
         setSelectedItem(null);
         loadBoardData();
-        console.log("Board edit: ", resp.data);
+        alert("글이 수정되었습니다.")
+        console.log("Board edit 성공: ", resp.data);
     } catch (error) {
         console.error("보드데이터 글수정 실패", error);
     }
 };
+
 //게시글 삭제 요청
 const boardDel = async () => {
+    const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
+    if (!token) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
+    if (!selectedItem || !selectedItem.seq) {
+        alert("삭제할 항목이 선택되지 않았습니다.");
+        return;
+    }
+
     try {
-        console.log(selectedItem);
-        const resp = await axios.delete(`http://10.125.121.118:8080/board/deleteBoard`);
-        setSelectedItem(null);
-        loadBoardData();
-        console.log("Board Del: ", resp.data);
+        console.log("삭제 요청 항목:", selectedItem);
+
+        // DELETE 요청
+        const resp = await axios.get(
+            `http://10.125.121.118:8080/board/deleteBoard?seq=${selectedItem.seq}`, // 식별자를 URL에 포함
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // 인증 헤더 추가
+                },
+            }
+        );
+
+        setSelectedItem(null); // 선택 항목 초기화
+        loadBoardData(); // 게시글 목록 새로고침
+        alert("글이 삭제되었습니다.")
+        console.log("Board Del 성공:", resp.data);
     } catch (error) {
-        console.error("보드데이터 삭제하기 실패", error);
+        console.error("보드데이터 삭제하기 실패:", error);
+        if (error.response) {
+            console.error("서버 응답 데이터:", error.response.data);
+        }
     }
 };
+
 
     //게시글 클릭시 실행
     const handleItemClick = (item) => {
@@ -129,6 +177,8 @@ const boardDel = async () => {
         setDetailOpen(true); // 상세 보기 창 열기
         setWriteOpen(false); 
         setEditOpen(false);
+        console.log("selectedItem:", selectedItem);
+
     };
     
     //상세페이지 닫음 실행
@@ -229,7 +279,7 @@ const boardDel = async () => {
                         </p>
                         <p className="text-md text-gray-700 mb-6">
                             <strong>작성일:</strong>{" "}
-                            {format(parseISO(selectedItem.regidate_date), "yyyy-MM-dd HH:mm:ss")}
+                            {format(parseISO(selectedItem.createDate), "yyyy-MM-dd HH:mm:ss")}
                         </p>
                         <p className="text-md text-gray-800 mb-6 whitespace-pre-wrap">
                             <strong>내용:</strong>
@@ -289,6 +339,7 @@ const boardDel = async () => {
                                    
                                     <th className="p-3 text-left text-gray-700">제목</th>
                                     <th className="p-3 text-center text-gray-700">내용</th>
+                                    <th className="p-3 text-center text-gray-700">작성자</th>
                                     <th className="p-3 text-right text-gray-700">작성시간</th>
                                  
                                 </tr>
@@ -303,10 +354,15 @@ const boardDel = async () => {
             >
                 <td className="p-3 text-left text-gray-700">{item.title}</td>
                 <td className="p-3 text-center text-gray-700">{item.content}</td>
+                <td className="p-3 text-center text-gray-700">{item.member?.nickname}</td>
                 <td className="p-3 text-right text-gray-700">
+                    <p className="text-md text-gray-700 mb-6">
                     {item.createDate
                         ? format(parseISO(item.createDate), "yyyy-MM-dd HH:mm:ss")
                         : "날짜 없음"}
+
+</p>
+
                 </td>
             </tr>
         ))

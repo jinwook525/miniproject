@@ -29,23 +29,26 @@ const LoginModal = ({ isOpen, onClose }) => {
     try {
       const resp = await axios.post('http://10.125.121.118:8080/login', data1);
       const token = resp.headers.get("Authorization"); // 토큰 선언
+      console.log("resp.data:", resp.data)
+      const nick = resp.data; // 응답에서 닉네임 추출
+
       if (token) {
-        dispatch(loginSuccess({ user: data1.userid, token })); // Redux 상태 업데이트
+        dispatch(loginSuccess({ user: data1.userid, token, nick })); // Redux 상태 업데이트
         localStorage.setItem("authToken", token); // 로컬 스토리지에 저장
         localStorage.setItem("userId", data1.userid); // 사용자 ID 저장
+        localStorage.setItem("nickname", nick);
     }
-    
-      const user = resp.data.userid; // 응답에서 사용자 ID 추출
-      const nick = resp.data.nickname; // 응답에서 닉네임 추출
+    console.log("API 응답 데이터:", data1); // 전체 API 응답 출력
+    console.log("data1의 userId 값:", data1.userId); // userId 확인
+    console.log("token 값:", data1.token);   // token 확인
       
-      dispatch(loginSuccess({ user, nick, token })); // Redux 업데이트
+      dispatch(loginSuccess({ nick, token })); // Redux 업데이트
       localStorage.setItem("authToken", token); // 토큰 다시 저장 (중복 제거 가능)
-      localStorage.setItem("userId", user); // 사용자 ID 저장
       localStorage.setItem("nick", nick); // 닉네임 저장
       
       console.log("저장된 토큰:", localStorage.getItem("authToken"));
-      console.log("Token : ", localStorage.getItem("authToken")); // 저장된 토큰 확인
-      console.log("res : ", resp); // 응답 전체 출력
+      console.log("nickname : ", localStorage.getItem("nickname"));// 닉네임
+      
      
       onClose(); // 모달 닫기
       

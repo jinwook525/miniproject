@@ -24,7 +24,7 @@ export default function Header({ onLoginClick, onSignUpClick, onBoardClick }) {
         {isAuthenticated ? (
           <>
             {/* 로그인 상태 시 표시되는 로그아웃 버튼 */}
-            <span className="mr-4 text-white font-bold">{nickname}님 환영합니다!</span>
+            <span className="mr-4 text-white font-bold">{nickname}환영합니다!</span>
             <button
               onClick={handleLogout}
               className="mr-4 cursor-pointer text-white hover:text-red-600 transition duration-200 font-bold text-lg"

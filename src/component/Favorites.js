@@ -4,7 +4,9 @@ import FoodCard from "./Foodcard";
 export default function Favorites() {
   const [favorites, setFavorites] = useState([]);
   const userId = localStorage.getItem("userId"); // 로컬 스토리지에서 userId 가져오기
-
+  if (!userId) {
+    console.error("로그인이 필요합니다. userId가 없습니다.");
+  }
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
