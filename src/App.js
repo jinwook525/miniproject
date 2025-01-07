@@ -53,13 +53,7 @@ function App() {
             />
           }
         />
-      <Route
-          path="/favorites"
-          element={
-            <Favorites
-            />
-          }
-        />
+      
       </Routes>
       
       {/* LoginModal은 조건부 렌더링 */}

@@ -112,7 +112,7 @@ const boardEdit = async (newPost) => {
 
     try {
         console.log("수정 요청 데이터:", newPost);
-        const resp = await axios.post(
+        const resp = await axios.put( // 요청 메서드 PUT으로 변경
             `http://10.125.121.118:8080/board/updateBoard`,
             newPost,
             {
@@ -124,12 +124,13 @@ const boardEdit = async (newPost) => {
         );
         setSelectedItem(null);
         loadBoardData();
-        alert("글이 수정되었습니다.")
+        alert("글이 수정되었습니다.");
         console.log("Board edit 성공: ", resp.data);
     } catch (error) {
         console.error("보드데이터 글수정 실패", error);
     }
 };
+
 
 //게시글 삭제 요청
 const boardDel = async () => {

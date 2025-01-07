@@ -7,8 +7,10 @@ export default function Header({ onLoginClick, onSignUpClick, onBoardClick }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.login.isAuthenticated); // 로그인 상태 확인
-  const nickname = useSelector((state) => state.login.nickname); // 닉네임 가져오기
-
+  const nickname = useSelector((state) => state.login.nick) || localStorage.getItem("nickname");
+ // 닉네임 가져오기
+  
+  
   const handleLogout = () => {
     dispatch(logoutSuccess()); // Redux 상태 업데이트
     localStorage.removeItem('authToken'); // 로컬스토리지에서 토큰 제거
@@ -24,7 +26,7 @@ export default function Header({ onLoginClick, onSignUpClick, onBoardClick }) {
         {isAuthenticated ? (
           <>
             {/* 로그인 상태 시 표시되는 로그아웃 버튼 */}
-            <span className="mr-4 text-white font-bold">{nickname}환영합니다!</span>
+            <span className="mr-4 text-white font-bold">{nickname}님 환영합니다!</span>
             <button
               onClick={handleLogout}
               className="mr-4 cursor-pointer text-white hover:text-red-600 transition duration-200 font-bold text-lg"
@@ -71,12 +73,7 @@ export default function Header({ onLoginClick, onSignUpClick, onBoardClick }) {
         >
           레시피
         </button>
-        <button
-          onClick={() => navigate('/favorites')}
-          className="cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-xl"
-        >
-          즐겨찾기
-        </button>
+        
         <button
           onClick={() => navigate('/buy')}
           className="cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-xl"

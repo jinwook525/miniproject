@@ -44,10 +44,10 @@ const LoginModal = ({ isOpen, onClose }) => {
       
       dispatch(loginSuccess({ nick, token })); // Redux 업데이트
       localStorage.setItem("authToken", token); // 토큰 다시 저장 (중복 제거 가능)
-      localStorage.setItem("nick", nick); // 닉네임 저장
+      localStorage.setItem("nickname", nick); // 닉네임 저장
       
       console.log("저장된 토큰:", localStorage.getItem("authToken"));
-      console.log("nickname : ", localStorage.getItem("nickname"));// 닉네임
+      console.log("스토리지nickname : ", localStorage.getItem("nickname"));// 닉네임
       
      
       onClose(); // 모달 닫기
