@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BoardWrite from './BoardWrite';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import {  isValid,format, parseISO } from 'date-fns';
+import { isValid, format, parseISO } from 'date-fns';
 
 
 
@@ -14,7 +14,7 @@ const BoardModal = ({ isOpen, onClose }) => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchKey, setSearchKey] = useState('');
-    
+
     const itemLen = 10;
     const totalPages = Math.ceil(boardData.length / itemLen);
     const lastPage = currentPage * itemLen;
@@ -25,13 +25,13 @@ const BoardModal = ({ isOpen, onClose }) => {
     const loginUser = useSelector((state) => state.login.userid);
     const loginNick = useSelector((state) => state.login.nickname);
     const loginToken = useSelector((state) => state.login.token);
-    
-    
+
+
     const loadBoardData = async () => {
         try {
             const response = await axios.get('http://10.125.121.118:8080/board/getBoardList');
             console.log('API 응답 데이터:', response.data);
-    
+
             const defaultDate = new Date().toISOString(); // 기본 현재 날짜
             const boardList = response.data.content || [];
             const updatedBoardList = boardList.map((item) => ({
@@ -40,16 +40,16 @@ const BoardModal = ({ isOpen, onClose }) => {
                     ? item.createDate
                     : defaultDate, // 유효하지 않은 경우 기본값 사용
             }));
-    
+
             console.log('업데이트된 게시글 목록:', updatedBoardList);
             setBoardData(updatedBoardList.slice().reverse()); // 역순 정렬
         } catch (error) {
             console.error('게시글 불러오기 실패:', error);
         }
     };
-    
-    
-    
+
+
+
 
     useEffect(() => {
         if (isOpen) {
@@ -58,7 +58,7 @@ const BoardModal = ({ isOpen, onClose }) => {
     }, [isOpen]);
 
     if (!isOpen) return null;
-    
+
     //게시글 생성 요청
     const boardWrite = async (newPost) => {
         const token = localStorage.getItem('authToken');
@@ -66,7 +66,7 @@ const BoardModal = ({ isOpen, onClose }) => {
             alert("로그인이 필요합니다.");
             return;
         }
-    
+
         const defaultDate = new Date().toISOString();
         const postData = {
             ...newPost,
@@ -75,9 +75,9 @@ const BoardModal = ({ isOpen, onClose }) => {
                 memberId: loginUser,
             },
         };
-    
+
         console.log("보드 생성 요청 데이터:", postData);
-    
+
         try {
             const resp = await axios.post(
                 `http://10.125.121.118:8080/board/insertBoard`,
@@ -99,76 +99,76 @@ const BoardModal = ({ isOpen, onClose }) => {
             }
         }
     };
-   
-    
-
-//게시글 수정 요청
-const boardEdit = async (newPost) => {
-    const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
-    if (!token) {
-        alert("로그인이 필요합니다.");
-        return;
-    }
-
-    try {
-        console.log("수정 요청 데이터:", newPost);
-        const resp = await axios.put( // 요청 메서드 PUT으로 변경
-            `http://10.125.121.118:8080/board/updateBoard`,
-            newPost,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`, // 인증 헤더 추가
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-        setSelectedItem(null);
-        loadBoardData();
-        alert("글이 수정되었습니다.");
-        console.log("Board edit 성공: ", resp.data);
-    } catch (error) {
-        console.error("보드데이터 글수정 실패", error);
-    }
-};
 
 
-//게시글 삭제 요청
-const boardDel = async () => {
-    const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
-    if (!token) {
-        alert("로그인이 필요합니다.");
-        return;
-    }
 
-    if (!selectedItem || !selectedItem.seq) {
-        alert("삭제할 항목이 선택되지 않았습니다.");
-        return;
-    }
-
-    try {
-        console.log("삭제 요청 항목:", selectedItem);
-
-        // DELETE 요청
-        const resp = await axios.get(
-            `http://10.125.121.118:8080/board/deleteBoard?seq=${selectedItem.seq}`, // 식별자를 URL에 포함
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`, // 인증 헤더 추가
-                },
-            }
-        );
-
-        setSelectedItem(null); // 선택 항목 초기화
-        loadBoardData(); // 게시글 목록 새로고침
-        alert("글이 삭제되었습니다.")
-        console.log("Board Del 성공:", resp.data);
-    } catch (error) {
-        console.error("보드데이터 삭제하기 실패:", error);
-        if (error.response) {
-            console.error("서버 응답 데이터:", error.response.data);
+    //게시글 수정 요청
+    const boardEdit = async (newPost) => {
+        const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
+        if (!token) {
+            alert("로그인이 필요합니다.");
+            return;
         }
-    }
-};
+
+        try {
+            console.log("수정 요청 데이터:", newPost);
+            const resp = await axios.put( // 요청 메서드 PUT으로 변경
+                `http://10.125.121.118:8080/board/updateBoard`,
+                newPost,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // 인증 헤더 추가
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+            setSelectedItem(null);
+            loadBoardData();
+            alert("글이 수정되었습니다.");
+            console.log("Board edit 성공: ", resp.data);
+        } catch (error) {
+            console.error("보드데이터 글수정 실패", error);
+        }
+    };
+
+
+    //게시글 삭제 요청
+    const boardDel = async () => {
+        const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
+        if (!token) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+
+        if (!selectedItem || !selectedItem.seq) {
+            alert("삭제할 항목이 선택되지 않았습니다.");
+            return;
+        }
+
+        try {
+            console.log("삭제 요청 항목:", selectedItem);
+
+            // DELETE 요청
+            const resp = await axios.get(
+                `http://10.125.121.118:8080/board/deleteBoard?seq=${selectedItem.seq}`, // 식별자를 URL에 포함
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // 인증 헤더 추가
+                    },
+                }
+            );
+
+            setSelectedItem(null); // 선택 항목 초기화
+            loadBoardData(); // 게시글 목록 새로고침
+            alert("글이 삭제되었습니다.")
+            console.log("Board Del 성공:", resp.data);
+        } catch (error) {
+            console.error("보드데이터 삭제하기 실패:", error);
+            if (error.response) {
+                console.error("서버 응답 데이터:", error.response.data);
+            }
+        }
+    };
 
 
     //게시글 클릭시 실행
@@ -176,12 +176,12 @@ const boardDel = async () => {
         console.log("선택된 게시글 데이터:", item); // 디버깅용 로그 추가
         setSelectedItem(item); // 선택된 게시글 설정
         setDetailOpen(true); // 상세 보기 창 열기
-        setWriteOpen(false); 
+        setWriteOpen(false);
         setEditOpen(false);
         console.log("selectedItem:", selectedItem);
 
     };
-    
+
     //상세페이지 닫음 실행
     const handleDetailClose = () => {
         setDetailOpen(false);
@@ -195,8 +195,8 @@ const boardDel = async () => {
             return;
         }
         setSelectedItem(null);
-        setWriteOpen(true);  
-        setDetailOpen(false); 
+        setWriteOpen(true);
+        setDetailOpen(false);
         setEditOpen(false);
     };
 
@@ -211,7 +211,7 @@ const boardDel = async () => {
             alert("로그인후 글수정이 가능합니다.");
             return;
         }
-        
+
         setEditOpen(true);
         setDetailOpen(false);
     };
@@ -238,16 +238,16 @@ const boardDel = async () => {
     //글수정창과 글쓰기창에서 확인버튼 클릭시 실행
     const handleSubmit = (newPost) => {
         console.log("newPost : ", newPost);
-        if (editOpen){
+        if (editOpen) {
             setEditOpen(false);
             setDetailOpen(true);
             boardEdit(newPost);
         } else {
-            setWriteOpen(false); 
+            setWriteOpen(false);
             setSelectedItem(newPost);
             boardWrite(newPost);
         };
-        
+
     };
     const defaultDate = new Date().toISOString(); // 기본 현재 날짜
 
@@ -259,7 +259,7 @@ const boardDel = async () => {
                     onClick={onClose}
                     className="absolute top-5 right-5 w-7 h-7 cursor-pointer"
                 />
-    
+
                 {/* 글쓰기, 글수정, 상세보기 페이지 조건부 렌더링 */}
                 {writeOpen || editOpen ? (
                     <BoardWrite
@@ -274,7 +274,7 @@ const boardDel = async () => {
                         <h2 className="text-2xl font-bold text-blue-700 mb-4">
                             {selectedItem.title}
                         </h2>
-                       
+
                         <p className="text-md text-gray-700 mb-6">
                             <strong>작성자:</strong> {selectedItem.userid}
                         </p>
@@ -337,44 +337,44 @@ const boardDel = async () => {
                         <table className="table-auto w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
                             <thead className="bg-gray-300">
                                 <tr>
-                                   
+
                                     <th className="p-3 text-left text-gray-700">제목</th>
                                     <th className="p-3 text-center text-gray-700">내용</th>
                                     <th className="p-3 text-center text-gray-700">작성자</th>
                                     <th className="p-3 text-right text-gray-700">작성시간</th>
-                                 
+
                                 </tr>
                             </thead>
                             <tbody>
-    {currentItems.length > 0 ? (
-        currentItems.map((item) => (
-            <tr
-                key={item.seq}
-                className="hover:bg-blue-50 transition-all cursor-pointer"
-                onClick={() => handleItemClick(item)}
-            >
-                <td className="p-3 text-left text-gray-700">{item.title}</td>
-                <td className="p-3 text-center text-gray-700">{item.content}</td>
-                <td className="p-3 text-center text-gray-700">{item.member?.nickname}</td>
-                <td className="p-3 text-right text-gray-700">
-                    <p className="text-md text-gray-700 mb-6">
-                    {item.createDate
-                        ? format(parseISO(item.createDate), "yyyy-MM-dd HH:mm:ss")
-                        : "날짜 없음"}
+                                {currentItems.length > 0 ? (
+                                    currentItems.map((item) => (
+                                        <tr
+                                            key={item.seq}
+                                            className="hover:bg-blue-50 transition-all cursor-pointer"
+                                            onClick={() => handleItemClick(item)}
+                                        >
+                                            <td className="p-3 text-left text-gray-700">{item.title}</td>
+                                            <td className="p-3 text-center text-gray-700">{item.content}</td>
+                                            <td className="p-3 text-center text-gray-700">{item.member?.nickname}</td>
+                                            <td className="p-3 text-right text-gray-700">
+                                                <p className="text-md text-gray-700 mb-6">
+                                                    {item.createDate
+                                                        ? format(parseISO(item.createDate), "yyyy-MM-dd HH:mm:ss")
+                                                        : "날짜 없음"}
 
-</p>
+                                                </p>
 
-                </td>
-            </tr>
-        ))
-    ) : (
-        <tr>
-            <td colSpan="5" className="text-center text-gray-700 py-6">
-                데이터가 없습니다.
-            </td>
-        </tr>
-    )}
-</tbody>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className="text-center text-gray-700 py-6">
+                                            데이터가 없습니다.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
 
 
                         </table>
@@ -388,9 +388,8 @@ const boardDel = async () => {
                             {[...Array(totalPages)].map((_, index) => (
                                 <button
                                     key={index}
-                                    className={`px-4 py-2 mx-1 border rounded ${
-                                        currentPage === index + 1 ? "bg-blue-600 text-white" : "hover:bg-gray-200"
-                                    }`}
+                                    className={`px-4 py-2 mx-1 border rounded ${currentPage === index + 1 ? "bg-blue-600 text-white" : "hover:bg-gray-200"
+                                        }`}
                                     onClick={() => setCurrentPage(index + 1)}
                                 >
                                     {index + 1}

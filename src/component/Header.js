@@ -8,9 +8,9 @@ export default function Header({ onLoginClick, onSignUpClick, onBoardClick }) {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.login.isAuthenticated); // 로그인 상태 확인
   const nickname = useSelector((state) => state.login.nick) || localStorage.getItem("nickname");
- // 닉네임 가져오기
-  
-  
+  // 닉네임 가져오기
+
+
   const handleLogout = () => {
     dispatch(logoutSuccess()); // Redux 상태 업데이트
     localStorage.removeItem('authToken'); // 로컬스토리지에서 토큰 제거
@@ -73,7 +73,7 @@ export default function Header({ onLoginClick, onSignUpClick, onBoardClick }) {
         >
           레시피
         </button>
-        
+
         <button
           onClick={() => navigate('/buy')}
           className="cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-xl"

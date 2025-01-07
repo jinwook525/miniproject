@@ -16,8 +16,8 @@ const BoardWrite = ({ onSubmit, onClose, initialData, user }) => {
                 memberId: user || '', // 작성자 ID
             },
         };
-        
-        
+
+
         onSubmit(newPost);  // 부모 컴포넌트로 새 글 데이터 전달
     };
 
