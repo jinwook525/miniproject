@@ -1,3 +1,4 @@
 
 
-![녹화_2025_01_02_16_44_32_470](https://github.com/user-attachments/assets/d8e3be69-6171-4682-8c6c-d38bb0b1312b)
+
+![풀버전](https://github.com/user-attachments/assets/50a488bc-a172-4c11-a37e-a81bedd5e839)
