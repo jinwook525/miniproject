@@ -290,7 +290,7 @@ const BoardModal = ({ isOpen, onClose }) => {
                         <div className="flex justify-end space-x-4">
                             <button
                                 onClick={handleEditClick}
-                                className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600"
+                                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                             >
                                 수정하기
                             </button>
@@ -302,7 +302,7 @@ const BoardModal = ({ isOpen, onClose }) => {
                             </button>
                             <button
                                 onClick={handleDetailClose}
-                                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
                             >
                                 닫기
                             </button>

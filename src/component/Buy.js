@@ -114,14 +114,14 @@ export default function InsectPriceMonitor() {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => decreasePageQuantity(insect.INSECT_NM)}
-                      className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600"
+                      className=" px-2 py-1 rounded border "
                     >
                       -
                     </button>
                     <span>{quantities[insect.INSECT_NM]}</span>
                     <button
                       onClick={() => increasePageQuantity(insect.INSECT_NM)}
-                      className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                      className="  px-2 py-1 rounded border "
                     >
                       +
                     </button>

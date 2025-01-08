@@ -1,37 +1,36 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './component/Header';
 import LoginModal from './component/Loginmodal';
 import SignModal from './component/Signmodal';
 import BoardModal from './component/BoardModal';
-import SearchMain from './component/SearchMain';
 import Recipe from './component/Recipe';
 import Buy from './component/Buy';
-import Favorites from './component/Favorites';
+
 function App() {
-  const [isLoginModalOpen, setLoginModalOpen] = useState(false);
   const [isSignModalOpen, setSignModalOpen] = useState(false);
   const [isBoardModalOpen, setBoardModalOpen] = useState(false); // 게시판 모달 상태 추가
+  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅 사용
 
-  console.log('회원가입 모달 상태:', isSignModalOpen);
-  console.log('게시판 모달 상태:', isBoardModalOpen); // 상태 확인 로그 추가
+  // 현재 경로가 /login일 때 로그인 모달을 열기
+  const isLoginModalOpen = window.location.pathname === '/login';
+
+  // 로그인 모달 닫기 시 경로 변경
+  const handleLoginModalClose = () => {
+    navigate('/'); // 홈 경로로 리디렉션
+  };
 
   return (
     <BrowserRouter>
       <Header
-        onLoginClick={() => setLoginModalOpen(true)}
-        onSignUpClick={() => {
-          console.log('onSignUpClick 호출됨');
-          setSignModalOpen(true);
-        }}
-        onBoardClick={() => {
-          console.log('onBoardClick 호출됨');
-          setBoardModalOpen(true); // 게시판 모달 열림 상태 설정
-        }}
+        onLoginClick={() => navigate('/login')} // /login 경로로 이동하여 로그인 모달 열기
+        onSignUpClick={() => setSignModalOpen(true)}
+        onBoardClick={() => setBoardModalOpen(true)}
       />
       <Routes>
         <Route path="/" element={<Recipe />} />
+        <Route path="/buy" element={<Buy />} />
         <Route
           path="/signup"
           element={
@@ -41,9 +40,6 @@ function App() {
             />
           }
         />
-        <Route path="/buy"  element={<Buy />} />
-
-        
         <Route
           path="/board"
           element={
@@ -53,15 +49,11 @@ function App() {
             />
           }
         />
-      
       </Routes>
-      
-      {/* LoginModal은 조건부 렌더링 */}
+
+      {/* LoginModal은 /login 경로에서만 표시 */}
       {isLoginModalOpen && (
-        <LoginModal
-          isOpen={isLoginModalOpen}
-          onClose={() => setLoginModalOpen(false)}
-        />
+        <LoginModal isOpen={isLoginModalOpen} onClose={handleLoginModalClose} />
       )}
     </BrowserRouter>
   );

@@ -40,6 +40,7 @@ export default function Header({ onLoginClick, onSignUpClick, onBoardClick }) {
             <button
               onClick={() => {
                 console.log('로그인 버튼 클릭');
+                navigate('/login'); // 경로 이동 추가
                 onLoginClick();
               }}
               className="mr-4 cursor-pointer text-white hover:text-blue-600 transition duration-200 font-bold text-lg"
