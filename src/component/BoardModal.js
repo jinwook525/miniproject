@@ -276,7 +276,7 @@ const BoardModal = ({ isOpen, onClose }) => {
                         </h2>
 
                         <p className="text-md text-gray-700 mb-6">
-                            <strong>작성자:</strong> {selectedItem.userid}
+                            <strong>작성자:</strong> {selectedItem.member.nickname}
                         </p>
                         <p className="text-md text-gray-700 mb-6">
                             <strong>작성일:</strong>{" "}

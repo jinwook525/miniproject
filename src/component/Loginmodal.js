@@ -1,7 +1,7 @@
 import axios from 'axios';
-import React, { useEffect, useRef } from 'react';
-
-import { useDispatch } from 'react-redux'; // useDispatch 추가
+import React, { useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 import { loginSuccess } from './LoginSlice';
 
 const LoginModal = ({ isOpen, onClose }) => {
@@ -9,6 +9,7 @@ const LoginModal = ({ isOpen, onClose }) => {
   const refId = useRef(null);
   const refPass = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // navigate 선언
 
   if (!isOpen) {
     console.log('LoginModal 렌더링되지 않음: isOpen이 false');
@@ -16,7 +17,6 @@ const LoginModal = ({ isOpen, onClose }) => {
   } else {
     console.log('LoginModal 렌더링됨: isOpen이 true');
   }
-  
 
   const handleLoginClick = async () => {
     const data1 = {
@@ -29,7 +29,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     try {
       const resp = await axios.post('http://10.125.121.118:8080/login', data1);
       const token = resp.headers.get("Authorization"); // 토큰 선언
-      console.log("resp.data:", resp.data)
+      console.log("resp.data:", resp.data);
       const nick = resp.data; // 응답에서 닉네임 추출
 
       if (token) {
@@ -37,21 +37,13 @@ const LoginModal = ({ isOpen, onClose }) => {
         localStorage.setItem("authToken", token); // 로컬 스토리지에 저장
         localStorage.setItem("userId", data1.userid); // 사용자 ID 저장
         localStorage.setItem("nickname", nick);
-    }
-    console.log("API 응답 데이터:", data1); // 전체 API 응답 출력
-    console.log("data1의 userId 값:", data1.userId); // userId 확인
-    console.log("token 값:", data1.token);   // token 확인
-      
-      dispatch(loginSuccess({ nick, token })); // Redux 업데이트
-      localStorage.setItem("authToken", token); // 토큰 다시 저장 (중복 제거 가능)
-      localStorage.setItem("nickname", nick); // 닉네임 저장
-      
+      }
+
       console.log("저장된 토큰:", localStorage.getItem("authToken"));
-      console.log("스토리지nickname : ", localStorage.getItem("nickname"));// 닉네임
-      
-     
+      console.log("스토리지nickname : ", localStorage.getItem("nickname"));
+
       onClose(); // 모달 닫기
-      
+      navigate('/'); // "/" 경로로 이동
     } catch (error) {
       console.error("로그인 실패 : ", error);
       alert("로그인 실패");
