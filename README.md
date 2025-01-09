@@ -1,4 +1,5 @@
 
 
 
-![풀버전](https://github.com/user-attachments/assets/50a488bc-a172-4c11-a37e-a81bedd5e839)
+
+![풀버전](https://github.com/user-attachments/assets/d9c85acb-123d-4f44-9348-41238c4ee9a1)
