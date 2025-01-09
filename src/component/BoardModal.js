@@ -14,51 +14,55 @@ const BoardModal = ({ isOpen, onClose }) => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchKey, setSearchKey] = useState('');
+    const [totalPages, setTotalPages] = useState(0); // 총 페이지 수 상태 추가
+    const [currentItems, setCurrentItems] = useState([]);
 
     const itemLen = 10;
-    const totalPages = Math.ceil(boardData.length / itemLen);
+
     const lastPage = currentPage * itemLen;
     const firstPage = lastPage - itemLen;
-    const currentItems = boardData.slice(firstPage, lastPage);
 
     const loginAuth = useSelector((state) => state.login.isAuthenticated);
     const loginUser = useSelector((state) => state.login.userid);
     const loginNick = useSelector((state) => state.login.nickname);
     const loginToken = useSelector((state) => state.login.token);
 
+    const itemsPerPage = 10; // 페이지당 항목 수
 
-    const loadBoardData = async () => {
+    // 서버에서 게시판 데이터 로드
+    const loadBoardData = async (page, size) => {
         try {
-            const response = await axios.get('http://10.125.121.118:8080/board/getBoardList');
-            console.log('API 응답 데이터:', response.data);
-
-            const defaultDate = new Date().toISOString(); // 기본 현재 날짜
-            const boardList = response.data.content || [];
-            const updatedBoardList = boardList.map((item) => ({
-                ...item,
-                createDate: item.createDate && isValid(parseISO(item.createDate))
-                    ? item.createDate
-                    : defaultDate, // 유효하지 않은 경우 기본값 사용
-            }));
-
-            console.log('업데이트된 게시글 목록:', updatedBoardList);
-            setBoardData(updatedBoardList.slice().reverse()); // 역순 정렬
+            const response = await axios.get(
+                `http://10.125.121.118:8080/board/getBoardList?pageNumber=${page}`
+            );
+            console.log(`Requesting page: ${page}, size: ${size}`);
+            console.log("response content:", response.data.content);
+    
+            const { content, totalPages } = response.data;
+    
+            setBoardData(content || []); // 전체 데이터 설정
+            setCurrentItems(content || []); // 현재 페이지 데이터 설정
+            setTotalPages(totalPages || 0); // 총 페이지 수 설정
         } catch (error) {
-            console.error('게시글 불러오기 실패:', error);
+            console.error("게시글 불러오기 실패:", error);
         }
     };
-
-
-
-
+    
+    const handlePageChange = (page) => {
+        if (page > 0 && page <= totalPages) {
+            console.log(`Changing to page: ${page}`);
+            setCurrentPage(page);
+        }
+    };
+    
     useEffect(() => {
         if (isOpen) {
-            loadBoardData();
+            loadBoardData(currentPage, itemsPerPage);
         }
-    }, [isOpen]);
+    }, [isOpen, currentPage]);
+    
 
     if (!isOpen) return null;
-
     //게시글 생성 요청
     const boardWrite = async (newPost) => {
         const token = localStorage.getItem('authToken');
@@ -89,7 +93,7 @@ const BoardModal = ({ isOpen, onClose }) => {
                 }
             );
             setSelectedItem(null);
-            loadBoardData();
+            loadBoardData(currentPage, itemsPerPage);
             alert("글쓰기 성공");
             console.log("Board write 성공: ", resp.data);
         } catch (error) {
@@ -123,7 +127,7 @@ const BoardModal = ({ isOpen, onClose }) => {
                 }
             );
             setSelectedItem(null);
-            loadBoardData();
+            loadBoardData(currentPage, itemsPerPage);
             alert("글이 수정되었습니다.");
             console.log("Board edit 성공: ", resp.data);
         } catch (error) {
@@ -159,7 +163,7 @@ const BoardModal = ({ isOpen, onClose }) => {
             );
 
             setSelectedItem(null); // 선택 항목 초기화
-            loadBoardData(); // 게시글 목록 새로고침
+            loadBoardData(currentPage, itemsPerPage); // 게시글 목록 새로고침
             alert("글이 삭제되었습니다.")
             console.log("Board Del 성공:", resp.data);
         } catch (error) {
@@ -357,13 +361,9 @@ const BoardModal = ({ isOpen, onClose }) => {
                                             <td className="p-3 text-center text-gray-700">{item.content}</td>
                                             <td className="p-3 text-center text-gray-700">{item.member?.nickname}</td>
                                             <td className="p-3 text-right text-gray-700">
-                                                <p className="text-md text-gray-700 mb-6">
-                                                    {item.createDate
-                                                        ? format(parseISO(item.createDate), "yyyy-MM-dd HH:mm:ss")
-                                                        : "날짜 없음"}
-
-                                                </p>
-
+                                                {item.createDate
+                                                    ? format(parseISO(item.createDate), "yyyy-MM-dd HH:mm:ss")
+                                                    : "날짜 없음"}
                                             </td>
                                         </tr>
                                     ))
@@ -377,11 +377,14 @@ const BoardModal = ({ isOpen, onClose }) => {
                             </tbody>
 
 
+
                         </table>
+                        {/* 페이지네이션 */}
                         <div className="flex justify-center mt-4">
                             <button
                                 className="px-4 py-2 border rounded hover:bg-gray-200"
-                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
                             >
                                 이전
                             </button>
@@ -390,18 +393,20 @@ const BoardModal = ({ isOpen, onClose }) => {
                                     key={index}
                                     className={`px-4 py-2 mx-1 border rounded ${currentPage === index + 1 ? "bg-blue-600 text-white" : "hover:bg-gray-200"
                                         }`}
-                                    onClick={() => setCurrentPage(index + 1)}
+                                    onClick={() => handlePageChange(index + 1)}
                                 >
                                     {index + 1}
                                 </button>
                             ))}
                             <button
                                 className="px-4 py-2 border rounded hover:bg-gray-200"
-                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
                             >
                                 다음
                             </button>
                         </div>
+
                     </div>
                 )}
             </div>

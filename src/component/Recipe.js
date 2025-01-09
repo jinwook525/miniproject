@@ -40,7 +40,7 @@ export default function Recipe() {
         dataNo: item.getElementsByTagName("dataNo")[0]?.textContent || "N/A",
         foodName: item.getElementsByTagName("foodNm")[0]?.textContent || "N/A",
         foodCategory: item.getElementsByTagName("foodGubunNm")[0]?.textContent || "N/A",
-        thumbnail: item.getElementsByTagName("thumbImgUrl")[0]?.textContent || "N/A",
+        thumbnail: item.getElementsByTagName("imgUrl")[0]?.textContent || "N/A",
         isFavorite: item.getElementsByTagName("isFavorite")[0]?.textContent === "true",
       }));
 
@@ -73,6 +73,8 @@ export default function Recipe() {
       };
       await fetchComments();
       setSelectedFood(detail);
+      
+
     } catch (error) {
       console.error("상세 정보 요청 중 오류 발생:", error);
     }
@@ -220,7 +222,7 @@ export default function Recipe() {
   const handleEditClick = (comment) => {
     setEditingCommentId(comment.seq); // 수정 중인 댓글 ID 설정
     setEditedContent(comment.content); // 기존 댓글 내용을 수정 입력 필드에 설정
-    
+
   };
 
   const handleEditCancel = () => {
@@ -238,7 +240,7 @@ export default function Recipe() {
       console.error("댓글 저장 실패:", error);
     }
   };
-  
+
 
   // 댓글 가져오기
   const fetchComments = async (page = 0, size = 10) => {
@@ -393,7 +395,7 @@ export default function Recipe() {
       </div>
 
       {/* 음식 목록 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {currentItems.map((food) => (
           <FoodCard
             key={food.dataNo}
@@ -422,21 +424,27 @@ export default function Recipe() {
 
       <Modal isOpen={!!selectedFood} onClose={() => setSelectedFood(null)}>
         {selectedFood && (
-          <div>
+          <div className="max-h-screen overflow-y-auto p-4">
             <h1 className="text-xl font-bold mb-4">{selectedFood.foodName}</h1>
-            <img
-              src={selectedFood.imageUrl}
-              alt={selectedFood.foodName}
-              className="w-40 h-auto mx-auto rounded-md mb-4"
-            />
-            <div className="overflow-y-auto max-h-96 pr-4">
-              <p className="text-sm mb-4">
+            <div className="flex items-start space-x-4 mb-4">
+              {/* 이미지 */}
+              <img
+                src={selectedFood.imageUrl}
+                alt={selectedFood.foodName}
+                className="w-60 h-auto rounded-md"
+              />
+              {/* 요약 */}
+              <p className="text-sm">
                 <strong>요약:</strong> {removeHtmlTags(selectedFood.summary)}
               </p>
+            </div>
+            {/* 레시피 */}
+            <div className="mt-4">
               <p className="text-sm leading-tight">
-                <strong>레시피:</strong> {removeHtmlTags(selectedFood.recipe)}
+                {removeHtmlTags(selectedFood.recipe)}
               </p>
-
+            </div>
+            <div>
               {/* 댓글 UI */}
               <div className="mt-6">
                 <h2 className="text-xl font-bold mb-4">댓글</h2>
@@ -445,7 +453,7 @@ export default function Recipe() {
                     <li key={comment.seq} className="border-b pb-4">
                       <div className="flex justify-between items-center">
                         <div className="flex-1">
-                          <span className="font-bold ">{comment.member.nickname}</span>
+                          <span className="font-bold">{comment.member.nickname}</span>
                           <span className="ml-2 text-sm text-gray-500">
                             {new Date(comment.createDate).toLocaleString()}
                           </span>
@@ -461,7 +469,6 @@ export default function Recipe() {
                             <p className="mt-2 text-gray-800">{comment.content}</p>
                           )}
                         </div>
-
                         <div className="flex space-x-2">
                           {editingCommentId === comment.seq ? (
                             <>
@@ -500,8 +507,6 @@ export default function Recipe() {
                   ))}
                 </ul>
 
-
-
                 {/* 댓글 추가 */}
                 <div className="mt-6">
                   <div className="flex items-center space-x-4">
@@ -514,18 +519,18 @@ export default function Recipe() {
                     />
                     <button
                       onClick={() => addComment(selectedFood.dataNo)}
-                      className=" text-black px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-400"
+                      className="text-black px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-400"
                     >
                       등록
                     </button>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         )}
       </Modal>
+
 
 
 
