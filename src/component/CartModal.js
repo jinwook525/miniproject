@@ -16,21 +16,21 @@ export default function CartModal({
   // 주문하기 버튼 핸들러
   const handleOrder = async () => {
     const token = localStorage.getItem("authToken");
-  
+
     if (!token) {
       alert("로그인이 필요합니다.");
       return;
     }
-  
+
     // 전송할 데이터 생성
     const orderData = cart.map((item) => ({
       item: item.INSECT_NM, // 곤충 이름
       quantity: item.quantity, // 수량
       price: parseFloat(item.AMOUNT), // 단가 (price로 필드명 변경)
     }));
-  
+
     console.log("전송 데이터:", orderData);
-  
+
     try {
       const response = await fetch("http://10.125.121.118:8080/shop/insertShop", {
         method: "POST",
@@ -40,7 +40,7 @@ export default function CartModal({
         },
         body: JSON.stringify(orderData), // orderData 배열 전송
       });
-  
+
       if (response.ok) {
         alert("주문이 성공적으로 접수되었습니다!");
         onClose(); // 모달 닫기
@@ -54,7 +54,7 @@ export default function CartModal({
       alert("서버 오류로 인해 주문에 실패했습니다.");
     }
   };
-  
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
